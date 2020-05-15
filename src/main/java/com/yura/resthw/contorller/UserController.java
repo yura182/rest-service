@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("user")
+@RequestMapping("users")
 public class UserController {
 
-    private final static String ID_PATH = "/{id}";
+    private final static String ID_PATH = "/{user_id}";
 
     private final UserService userService;
 
@@ -26,8 +26,8 @@ public class UserController {
     }
 
     @GetMapping(ID_PATH)
-    public UserDto getUser(@PathVariable Integer id) {
-        return userService.findById(id);
+    public UserDto getUser(@PathVariable Integer user_id) {
+        return userService.findById(user_id);
     }
 
     @PostMapping()
@@ -36,12 +36,12 @@ public class UserController {
     }
 
     @PutMapping(ID_PATH)
-    public UserDto updateUser(@RequestBody UserDto userDto, @PathVariable Integer id) {
-        return userService.update(userDto, id);
+    public UserDto updateUser(@RequestBody UserDto userDto, @PathVariable Integer user_id) {
+        return userService.update(userDto, user_id);
     }
 
     @DeleteMapping(ID_PATH)
-    public void deleteUser(@PathVariable Integer id) {
-        userService.delete(id);
+    public void deleteUser(@PathVariable Integer user_id) {
+        userService.delete(user_id);
     }
 }

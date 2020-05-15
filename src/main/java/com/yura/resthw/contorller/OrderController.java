@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("order")
+@RequestMapping("/orders")
 public class OrderController {
 
-    private final static String ID_PATH = "/{id}";
+    private final static String ID_PATH = "/{order_id}";
 
     private final OrderService orderService;
 
@@ -26,8 +26,8 @@ public class OrderController {
     }
 
     @GetMapping(ID_PATH)
-    public OrderDto getOrder(@PathVariable Integer id) {
-        return orderService.findById(id);
+    public OrderDto getOrder(@PathVariable Integer order_id) {
+        return orderService.findById(order_id);
     }
 
     @PostMapping
@@ -36,12 +36,12 @@ public class OrderController {
     }
 
     @PutMapping(ID_PATH)
-    public OrderDto updateOrder(@RequestBody OrderDto orderDto, @PathVariable Integer id) {
-        return orderService.update(orderDto, id);
+    public OrderDto updateOrder(@RequestBody OrderDto orderDto, @PathVariable Integer order_id) {
+        return orderService.update(orderDto, order_id);
     }
 
     @DeleteMapping(ID_PATH)
-    public void deleteOrder(@PathVariable Integer id) {
-        orderService.delete(id);
+    public void deleteOrder(@PathVariable Integer order_id) {
+        orderService.delete(order_id);
     }
 }
