@@ -12,6 +12,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -80,6 +82,18 @@ class OrderServiceImplTest {
         verify(orderRepository).deleteById(ID);
     }
 
+    @Test
+    void findAll_ShouldReturnListOfOrders() {
+        List<OrderEntity> orders = Collections.singletonList(ORDER_ENTITY);
+        List<OrderDto> expected = Collections.singletonList(ORDER_DTO);
+
+        when(orderRepository.findAll()).thenReturn(orders);
+        when(orderMapper.mapEntityToDto(ORDER_ENTITY)).thenReturn(ORDER_DTO);
+
+        List<OrderDto> actual = orderService.findAll();
+
+        assertEquals(expected, actual);
+    }
 
     private static OrderEntity getOrderEntity() {
         return OrderEntity.builder()

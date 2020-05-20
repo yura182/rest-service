@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -34,7 +36,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto update(UserDto userDto, Integer id) {
-        userRepository.findById(id)
+        userRepository
+                .findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         userDto.setId(id);
@@ -47,6 +50,15 @@ public class UserServiceImpl implements UserService {
         UserDto userDto = UserDto.builder().withId(id).build();
 
         userRepository.delete(userMapper.mapDtoToEntity(userDto));
+    }
+
+    @Override
+    public List<UserDto> findAll() {
+        return userRepository
+                .findAll()
+                .stream()
+                .map(userMapper::mapEntityToDto)
+                .collect(Collectors.toList());
     }
 
     private UserEntity saveEntity(UserDto userDto) {

@@ -8,6 +8,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -56,6 +59,17 @@ class OrderControllerTest {
         orderController.deleteOrder(ID);
 
         verify(orderService).delete(ID);
+    }
+
+    @Test
+    void getAllOrders_ShouldReturnListOfOrders() {
+        List<OrderDto> expected = Collections.singletonList(ORDER_DTO);
+
+        when(orderService.findAll()).thenReturn(expected);
+
+        List<OrderDto> actual = orderController.getAllOrders();
+
+        assertEquals(expected, actual);
     }
 
     private static OrderDto getOrderDto() {

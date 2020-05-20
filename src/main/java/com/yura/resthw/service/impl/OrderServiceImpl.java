@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -36,8 +38,18 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public List<OrderDto> findAll() {
+        return orderRepository
+                .findAll()
+                .stream()
+                .map(orderMapper::mapEntityToDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public OrderDto update(OrderDto orderDto, Integer id) {
-        orderRepository.findById(id)
+        orderRepository
+                .findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Order not found"));
 
         orderDto.setId(id);
@@ -55,6 +67,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private OrderEntity getOrderById(Integer id) {
-        return orderRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Order not found"));
+        return orderRepository
+                .findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Order not found"));
     }
 }

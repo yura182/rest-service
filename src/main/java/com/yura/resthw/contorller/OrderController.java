@@ -12,11 +12,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/orders")
 public class OrderController {
 
-    private final static String ID_PATH = "/{order_id}";
+    private final static String ID_PATH = "/{orderId}";
 
     private final OrderService orderService;
 
@@ -26,8 +28,13 @@ public class OrderController {
     }
 
     @GetMapping(ID_PATH)
-    public OrderDto getOrder(@PathVariable Integer order_id) {
-        return orderService.findById(order_id);
+    public OrderDto getOrder(@PathVariable Integer orderId) {
+        return orderService.findById(orderId);
+    }
+
+    @GetMapping
+    public List<OrderDto> getAllOrders() {
+        return orderService.findAll();
     }
 
     @PostMapping
@@ -36,12 +43,12 @@ public class OrderController {
     }
 
     @PutMapping(ID_PATH)
-    public OrderDto updateOrder(@RequestBody OrderDto orderDto, @PathVariable Integer order_id) {
-        return orderService.update(orderDto, order_id);
+    public OrderDto updateOrder(@RequestBody OrderDto orderDto, @PathVariable Integer orderId) {
+        return orderService.update(orderDto, orderId);
     }
 
     @DeleteMapping(ID_PATH)
-    public void deleteOrder(@PathVariable Integer order_id) {
-        orderService.delete(order_id);
+    public void deleteOrder(@PathVariable Integer orderId) {
+        orderService.delete(orderId);
     }
 }

@@ -11,6 +11,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -80,6 +82,19 @@ class UserServiceImplTest {
         userService.delete(ID);
 
         verify(userRepository).delete(USER_ENTITY);
+    }
+
+    @Test
+    void findAll_ShouldReturnListOfUsers() {
+        List<UserEntity> users = Collections.singletonList(USER_ENTITY);
+        List<UserDto> expected = Collections.singletonList(USER_DTO);
+
+        when(userRepository.findAll()).thenReturn(users);
+        when(userMapper.mapEntityToDto(USER_ENTITY)).thenReturn(USER_DTO);
+
+        List<UserDto> actual = userService.findAll();
+
+        assertEquals(expected, actual);
     }
 
     private static UserEntity getUserEntity() {
