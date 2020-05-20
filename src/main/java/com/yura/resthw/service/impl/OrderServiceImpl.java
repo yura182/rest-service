@@ -7,13 +7,13 @@ import com.yura.resthw.entity.UserEntity;
 import com.yura.resthw.service.OrderService;
 import com.yura.resthw.service.mapper.EntityMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -41,18 +41,16 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderDto> findAllByUserId(Integer userId) {
+    public Page<OrderDto> findAllByUserId(Integer userId, Pageable pageable) {
         return orderRepository
-                .findAllByUserId(userId)
-                .stream()
-                .map(orderMapper::mapEntityToDto)
-                .collect(Collectors.toList());
+                .findAllByUserEntity(getUserEntityWithId(userId), pageable)
+                .map(orderMapper::mapEntityToDto);
     }
 
     @Override
     public OrderDto update(OrderDto orderDto, Integer userId, Integer orderId) {
         orderRepository
-                .findByUserIdAndOrderId(userId, orderId)
+                .findByUserEntityAndId(getUserEntityWithId(userId), orderId)
                 .orElseThrow(() -> new EntityNotFoundException("Order not found"));
 
         orderDto.setId(orderId);
@@ -65,7 +63,11 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public void delete(Integer userId, Integer orderId) {
-        orderRepository.deleteByUserEntityAndId(UserEntity.builder().withId(userId).build(), orderId);
+        orderRepository.deleteByUserEntityAndId(getUserEntityWithId(userId), orderId);
+    }
+
+    private UserEntity getUserEntityWithId(Integer userId) {
+        return UserEntity.builder().withId(userId).build();
     }
 
     private OrderEntity saveEntity(OrderDto orderDto) {
@@ -74,7 +76,7 @@ public class OrderServiceImpl implements OrderService {
 
     private OrderEntity getOrderByUserIdAndOrderId(Integer userId, Integer orderId) {
         return orderRepository
-                .findByUserIdAndOrderId(userId, orderId)
+                .findByUserEntityAndId(getUserEntityWithId(userId), orderId)
                 .orElseThrow(() -> new EntityNotFoundException("Order not found"));
     }
 }

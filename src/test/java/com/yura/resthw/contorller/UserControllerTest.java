@@ -7,9 +7,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Collections;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
@@ -63,11 +66,12 @@ class UserControllerTest {
 
     @Test
     void getAllUsers_ShouldReturnListOfUsers() {
-        List<UserDto> expected = Collections.singletonList(USER_DTO);
+        Page<UserDto> expected = new PageImpl<>(Collections.singletonList(USER_DTO));
+        Pageable pageable = PageRequest.of(1, 1);
 
-        when(userService.findAll()).thenReturn(expected);
+        when(userService.findAll(pageable)).thenReturn(expected);
 
-        List<UserDto> actual = userController.getAllUsers().getBody();
+        Page<UserDto> actual = userController.getAllUsers(pageable).getBody();
 
         assertEquals(expected, actual);
     }

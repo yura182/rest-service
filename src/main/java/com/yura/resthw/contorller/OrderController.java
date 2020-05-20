@@ -3,6 +3,10 @@ package com.yura.resthw.contorller;
 import com.yura.resthw.dto.OrderDto;
 import com.yura.resthw.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,8 +17,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("users/{userId}/orders")
@@ -37,10 +39,11 @@ public class OrderController {
     }
 
     @GetMapping
-    public ResponseEntity<List<OrderDto>> getAllUserOrders(@PathVariable Integer userId) {
+    public ResponseEntity<Page<OrderDto>> getAllUserOrders(@PathVariable Integer userId,
+                                                           @PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(orderService.findAllByUserId(userId));
+                .body(orderService.findAllByUserId(userId, pageable));
     }
 
     @PostMapping

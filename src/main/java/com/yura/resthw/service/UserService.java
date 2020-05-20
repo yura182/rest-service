@@ -1,8 +1,8 @@
 package com.yura.resthw.service;
 
 import com.yura.resthw.dto.UserDto;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface UserService {
 
@@ -10,7 +10,7 @@ public interface UserService {
 
     UserDto findById(Integer id);
 
-    List<UserDto> findAll();
+    Page<UserDto> findAll(Pageable pageable);
 
     UserDto update(UserDto userDto, Integer id);
 

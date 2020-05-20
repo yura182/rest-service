@@ -7,9 +7,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Collections;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
@@ -63,11 +66,12 @@ class OrderControllerTest {
 
     @Test
     void getAllOrders_ShouldReturnListOfOrders() {
-        List<OrderDto> expected = Collections.singletonList(ORDER_DTO);
+        Page<OrderDto> expected = new PageImpl<>(Collections.singletonList(ORDER_DTO));
+        Pageable pageable = PageRequest.of(1, 1);
 
-        when(orderService.findAllByUserId(ID)).thenReturn(expected);
+        when(orderService.findAllByUserId(ID, pageable)).thenReturn(expected);
 
-        List<OrderDto> actual = orderController.getAllUserOrders(ID).getBody();
+        Page<OrderDto> actual = orderController.getAllUserOrders(ID, pageable).getBody();
 
         assertEquals(expected, actual);
     }

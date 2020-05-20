@@ -9,10 +9,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -86,13 +89,14 @@ class UserServiceImplTest {
 
     @Test
     void findAll_ShouldReturnListOfUsers() {
-        List<UserEntity> users = Collections.singletonList(USER_ENTITY);
-        List<UserDto> expected = Collections.singletonList(USER_DTO);
+        Page<UserEntity> users = new PageImpl<>(Collections.singletonList(USER_ENTITY));
+        Page<UserDto> expected = new PageImpl<>(Collections.singletonList(USER_DTO));
+        Pageable pageable = PageRequest.of(1, 1);
 
-        when(userRepository.findAll()).thenReturn(users);
+        when(userRepository.findAll(pageable)).thenReturn(users);
         when(userMapper.mapEntityToDto(USER_ENTITY)).thenReturn(USER_DTO);
 
-        List<UserDto> actual = userService.findAll();
+        Page<UserDto> actual = userService.findAll(pageable);
 
         assertEquals(expected, actual);
     }
