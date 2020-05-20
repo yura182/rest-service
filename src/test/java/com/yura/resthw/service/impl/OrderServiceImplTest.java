@@ -43,43 +43,43 @@ class OrderServiceImplTest {
         when(orderMapper.mapDtoToEntity(ORDER_DTO)).thenReturn(ORDER_ENTITY);
         when(orderMapper.mapEntityToDto(ORDER_ENTITY)).thenReturn(ORDER_DTO);
 
-        orderService.add(ORDER_DTO);
+        orderService.add(ID, ORDER_DTO);
 
         verify(orderRepository).save(ORDER_ENTITY);
     }
 
     @Test
     void findById_ShouldFindOrder() {
-        when(orderRepository.findById(ID)).thenReturn(Optional.of(ORDER_ENTITY));
+        when(orderRepository.findByUserIdAndOrderId(ID, ID)).thenReturn(Optional.of(ORDER_ENTITY));
         when(orderMapper.mapEntityToDto(ORDER_ENTITY)).thenReturn(ORDER_DTO);
 
-        OrderDto actual = orderService.findById(ID);
+        OrderDto actual = orderService.findByUserIdAndOrderId(ID, ID);
 
         assertEquals(ORDER_DTO, actual);
     }
 
     @Test
     void findById_ShouldThrowEntityNotFoundException() {
-        when(orderRepository.findById(ID)).thenReturn(Optional.empty());
+        when(orderRepository.findByUserIdAndOrderId(ID, ID)).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> orderService.findById(ID));
+        assertThrows(EntityNotFoundException.class, () -> orderService.findByUserIdAndOrderId(ID, ID));
     }
 
     @Test
     void update_ShouldUpdateOrder() {
-        when(orderRepository.findById(ID)).thenReturn(Optional.of(ORDER_ENTITY));
+        when(orderRepository.findByUserIdAndOrderId(ID, ID)).thenReturn(Optional.of(ORDER_ENTITY));
         when(orderMapper.mapDtoToEntity(ORDER_DTO)).thenReturn(ORDER_ENTITY);
 
-        orderService.update(ORDER_DTO, ID);
+        orderService.update(ORDER_DTO, ID, ID);
 
         verify(orderRepository).save(ORDER_ENTITY);
     }
 
     @Test
     void delete_ShouldDeleteOrder() {
-        orderService.delete(ID);
+        orderService.delete(ID, ID);
 
-        verify(orderRepository).deleteById(ID);
+        verify(orderRepository).deleteByUserEntityAndId(UserEntity.builder().withId(ID).build(), ID);
     }
 
     @Test
@@ -87,10 +87,10 @@ class OrderServiceImplTest {
         List<OrderEntity> orders = Collections.singletonList(ORDER_ENTITY);
         List<OrderDto> expected = Collections.singletonList(ORDER_DTO);
 
-        when(orderRepository.findAll()).thenReturn(orders);
+        when(orderRepository.findAllByUserId(ID)).thenReturn(orders);
         when(orderMapper.mapEntityToDto(ORDER_ENTITY)).thenReturn(ORDER_DTO);
 
-        List<OrderDto> actual = orderService.findAll();
+        List<OrderDto> actual = orderService.findAllByUserId(ID);
 
         assertEquals(expected, actual);
     }

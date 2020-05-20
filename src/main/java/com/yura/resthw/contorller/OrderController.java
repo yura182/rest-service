@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/orders")
+@RequestMapping("users/{userId}/orders")
 public class OrderController {
 
     private final static String ID_PATH = "/{orderId}";
@@ -28,27 +28,29 @@ public class OrderController {
     }
 
     @GetMapping(ID_PATH)
-    public OrderDto getOrder(@PathVariable Integer orderId) {
-        return orderService.findById(orderId);
+    public OrderDto getOrder(@PathVariable Integer userId, @PathVariable Integer orderId) {
+        return orderService.findByUserIdAndOrderId(userId, orderId);
     }
 
     @GetMapping
-    public List<OrderDto> getAllOrders() {
-        return orderService.findAll();
+    public List<OrderDto> getAllUserOrders(@PathVariable Integer userId) {
+        return orderService.findAllByUserId(userId);
     }
 
     @PostMapping
-    public OrderDto addOrder(@RequestBody OrderDto orderDto) {
-        return orderService.add(orderDto);
+    public OrderDto addOrder(@PathVariable Integer userId, @RequestBody OrderDto orderDto) {
+        return orderService.add(userId, orderDto);
     }
 
     @PutMapping(ID_PATH)
-    public OrderDto updateOrder(@RequestBody OrderDto orderDto, @PathVariable Integer orderId) {
-        return orderService.update(orderDto, orderId);
+    public OrderDto updateOrder(@RequestBody OrderDto orderDto,
+                                @PathVariable Integer userId,
+                                @PathVariable Integer orderId) {
+        return orderService.update(orderDto, userId, orderId);
     }
 
     @DeleteMapping(ID_PATH)
-    public void deleteOrder(@PathVariable Integer orderId) {
-        orderService.delete(orderId);
+    public void deleteOrder(@PathVariable Integer userId, @PathVariable Integer orderId) {
+        orderService.delete(userId, orderId);
     }
 }

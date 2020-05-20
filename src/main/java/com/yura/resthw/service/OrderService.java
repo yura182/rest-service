@@ -6,13 +6,13 @@ import java.util.List;
 
 public interface OrderService {
 
-    OrderDto add(OrderDto orderDto);
+    OrderDto add(Integer userId, OrderDto orderDto);
 
-    OrderDto findById(Integer id);
+    OrderDto findByUserIdAndOrderId(Integer userId, Integer orderId);
 
-    List<OrderDto> findAll();
+    List<OrderDto> findAllByUserId(Integer userId);
 
-    OrderDto update(OrderDto orderDto, Integer id);
+    OrderDto update(OrderDto orderDto, Integer userId, Integer orderId);
 
-    void delete(Integer id);
+    void delete(Integer userId, Integer orderId);
 }

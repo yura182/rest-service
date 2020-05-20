@@ -28,6 +28,10 @@ public class OrderDto {
         this.dateTime = dateTime;
     }
 
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
     public Integer getId() {
         return id;
     }
