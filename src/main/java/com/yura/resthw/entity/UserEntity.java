@@ -1,6 +1,9 @@
 package com.yura.resthw.entity;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -21,7 +24,12 @@ public class UserEntity {
 
     private String email;
 
-    @OneToMany (mappedBy="userEntity")
+    private String password;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "userEntity")
     private List<OrderEntity> orders;
 
     public UserEntity() {
@@ -32,6 +40,8 @@ public class UserEntity {
         this.name = builder.name;
         this.email = builder.email;
         this.orders = builder.orders;
+        this.password = builder.password;
+        this.role = builder.role;
     }
 
     public Integer getId() {
@@ -50,6 +60,14 @@ public class UserEntity {
         return orders;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -62,12 +80,14 @@ public class UserEntity {
         return Objects.equals(id, that.id) &&
                 Objects.equals(name, that.name) &&
                 Objects.equals(email, that.email) &&
+                Objects.equals(password, that.password) &&
+                role == that.role &&
                 Objects.equals(orders, that.orders);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, email, orders);
+        return Objects.hash(id, name, email, password, role, orders);
     }
 
     @Override
@@ -76,6 +96,7 @@ public class UserEntity {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
+                ", role=" + role +
                 ", orders=" + orders +
                 '}';
     }
@@ -88,6 +109,8 @@ public class UserEntity {
         private Integer id;
         private String name;
         private String email;
+        private String password;
+        private Role role;
         private List<OrderEntity> orders;
 
         private Builder() {
@@ -106,6 +129,16 @@ public class UserEntity {
 
         public Builder withEmail(String email) {
             this.email = email;
+            return this;
+        }
+
+        public Builder withRole(Role role) {
+            this.role = role;
+            return this;
+        }
+
+        public Builder withPassword(String password) {
+            this.password = password;
             return this;
         }
 
