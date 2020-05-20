@@ -31,7 +31,7 @@ class UserControllerTest {
     void getUser_ShouldReturnUser() {
         when(userService.findById(ID)).thenReturn(USER_DTO);
 
-        UserDto actual = userController.getUser(ID);
+        UserDto actual = userController.getUser(ID).getBody();
 
         assertEquals(USER_DTO, actual);
     }
@@ -40,7 +40,7 @@ class UserControllerTest {
     void addUser_ShouldAddUser() {
         when(userService.add(USER_DTO)).thenReturn(USER_DTO);
 
-        UserDto actual = userController.addUser(USER_DTO);
+        UserDto actual = userController.addUser(USER_DTO).getBody();
 
         assertEquals(USER_DTO, actual);
     }
@@ -49,7 +49,7 @@ class UserControllerTest {
     void updateUser_ShouldUpdateUser() {
         when(userService.update(USER_DTO, ID)).thenReturn(USER_DTO);
 
-        UserDto actual = userController.updateUser(USER_DTO, ID);
+        UserDto actual = userController.updateUser(USER_DTO, ID).getBody();
 
         assertEquals(USER_DTO, actual);
     }
@@ -67,7 +67,7 @@ class UserControllerTest {
 
         when(userService.findAll()).thenReturn(expected);
 
-        List<UserDto> actual = userController.getAllUsers();
+        List<UserDto> actual = userController.getAllUsers().getBody();
 
         assertEquals(expected, actual);
     }

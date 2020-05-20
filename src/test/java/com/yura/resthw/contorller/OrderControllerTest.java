@@ -31,7 +31,7 @@ class OrderControllerTest {
     void getOrder_ShouldReturnOrder() {
         when(orderService.findByUserIdAndOrderId(ID, ID)).thenReturn(ORDER_DTO);
 
-        OrderDto actual = orderController.getOrder(ID, ID);
+        OrderDto actual = orderController.getOrder(ID, ID).getBody();
 
         assertEquals(ORDER_DTO, actual);
     }
@@ -40,7 +40,7 @@ class OrderControllerTest {
     void addOrder_ShouldAddOrder() {
         when(orderService.add(ID, ORDER_DTO)).thenReturn(ORDER_DTO);
 
-        OrderDto actual = orderController.addOrder(ID, ORDER_DTO);
+        OrderDto actual = orderController.addOrder(ID, ORDER_DTO).getBody();
 
         assertEquals(ORDER_DTO, actual);
     }
@@ -49,7 +49,7 @@ class OrderControllerTest {
     void updateOrder_ShouldUpdateOrder() {
         when(orderService.update(ORDER_DTO, ID, ID)).thenReturn(ORDER_DTO);
 
-        OrderDto actual = orderController.updateOrder(ORDER_DTO, ID, ID);
+        OrderDto actual = orderController.updateOrder(ORDER_DTO, ID, ID).getBody();
 
         assertEquals(ORDER_DTO, actual);
     }
@@ -67,7 +67,7 @@ class OrderControllerTest {
 
         when(orderService.findAllByUserId(ID)).thenReturn(expected);
 
-        List<OrderDto> actual = orderController.getAllUserOrders(ID);
+        List<OrderDto> actual = orderController.getAllUserOrders(ID).getBody();
 
         assertEquals(expected, actual);
     }

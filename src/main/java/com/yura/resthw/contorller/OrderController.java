@@ -3,6 +3,8 @@ package com.yura.resthw.contorller;
 import com.yura.resthw.dto.OrderDto;
 import com.yura.resthw.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,29 +30,41 @@ public class OrderController {
     }
 
     @GetMapping(ID_PATH)
-    public OrderDto getOrder(@PathVariable Integer userId, @PathVariable Integer orderId) {
-        return orderService.findByUserIdAndOrderId(userId, orderId);
+    public ResponseEntity<OrderDto> getOrder(@PathVariable Integer userId, @PathVariable Integer orderId) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(orderService.findByUserIdAndOrderId(userId, orderId));
     }
 
     @GetMapping
-    public List<OrderDto> getAllUserOrders(@PathVariable Integer userId) {
-        return orderService.findAllByUserId(userId);
+    public ResponseEntity<List<OrderDto>> getAllUserOrders(@PathVariable Integer userId) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(orderService.findAllByUserId(userId));
     }
 
     @PostMapping
-    public OrderDto addOrder(@PathVariable Integer userId, @RequestBody OrderDto orderDto) {
-        return orderService.add(userId, orderDto);
+    public ResponseEntity<OrderDto> addOrder(@PathVariable Integer userId, @RequestBody OrderDto orderDto) {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(orderService.add(userId, orderDto));
     }
 
     @PutMapping(ID_PATH)
-    public OrderDto updateOrder(@RequestBody OrderDto orderDto,
+    public ResponseEntity<OrderDto> updateOrder(@RequestBody OrderDto orderDto,
                                 @PathVariable Integer userId,
                                 @PathVariable Integer orderId) {
-        return orderService.update(orderDto, userId, orderId);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(orderService.update(orderDto, userId, orderId));
     }
 
     @DeleteMapping(ID_PATH)
-    public void deleteOrder(@PathVariable Integer userId, @PathVariable Integer orderId) {
+    public ResponseEntity<Void> deleteOrder(@PathVariable Integer userId, @PathVariable Integer orderId) {
         orderService.delete(userId, orderId);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .build();
     }
 }
