@@ -1,13 +1,21 @@
 package com.yura.resthw.dto;
 
+import com.yura.resthw.entity.Role;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class UserDto {
+public class UserDto implements UserDetails {
 
     private Integer id;
     private String name;
     private String email;
+    private String password;
+    private Role role;
     private List<OrderDto> orders;
 
     public UserDto() {
@@ -18,6 +26,8 @@ public class UserDto {
         this.id = builder.id;
         this.name = builder.name;
         this.email = builder.email;
+        this.password = builder.password;
+        this.role = builder.role;
         this.orders = builder.orders;
     }
 
@@ -37,6 +47,10 @@ public class UserDto {
         return email;
     }
 
+    public Role getRole() {
+        return role;
+    }
+
     public List<OrderDto> getOrders() {
         return orders;
     }
@@ -49,16 +63,18 @@ public class UserDto {
         if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
-        UserDto that = (UserDto) obj;
-        return Objects.equals(id, that.id) &&
-                Objects.equals(name, that.name) &&
-                Objects.equals(email, that.email) &&
-                Objects.equals(orders, that.orders);
+        UserDto userDto = (UserDto) obj;
+        return Objects.equals(id, userDto.id) &&
+                Objects.equals(name, userDto.name) &&
+                Objects.equals(email, userDto.email) &&
+                Objects.equals(password, userDto.password) &&
+                role == userDto.role &&
+                Objects.equals(orders, userDto.orders);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, email, orders);
+        return Objects.hash(id, name, email, password, role, orders);
     }
 
     @Override
@@ -67,6 +83,7 @@ public class UserDto {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
+                ", role=" + role +
                 ", orders=" + orders +
                 '}';
     }
@@ -75,10 +92,47 @@ public class UserDto {
         return new Builder();
     }
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.singleton(getRole());
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
     public static class Builder {
         private Integer id;
         private String name;
         private String email;
+        private String password;
+        private Role role;
         private List<OrderDto> orders;
 
         private Builder() {
@@ -97,6 +151,16 @@ public class UserDto {
 
         public Builder withEmail(String email) {
             this.email = email;
+            return this;
+        }
+
+        public Builder withPassword(String password) {
+            this.password = password;
+            return this;
+        }
+
+        public Builder withRole(Role role) {
+            this.role = role;
             return this;
         }
 

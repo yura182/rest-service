@@ -7,9 +7,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Collections;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
@@ -31,7 +34,7 @@ class UserControllerTest {
     void getUser_ShouldReturnUser() {
         when(userService.findById(ID)).thenReturn(USER_DTO);
 
-        UserDto actual = userController.getUser(ID);
+        UserDto actual = userController.getUser(ID).getBody();
 
         assertEquals(USER_DTO, actual);
     }
@@ -40,7 +43,7 @@ class UserControllerTest {
     void addUser_ShouldAddUser() {
         when(userService.add(USER_DTO)).thenReturn(USER_DTO);
 
-        UserDto actual = userController.addUser(USER_DTO);
+        UserDto actual = userController.addUser(USER_DTO).getBody();
 
         assertEquals(USER_DTO, actual);
     }
@@ -49,7 +52,7 @@ class UserControllerTest {
     void updateUser_ShouldUpdateUser() {
         when(userService.update(USER_DTO, ID)).thenReturn(USER_DTO);
 
-        UserDto actual = userController.updateUser(USER_DTO, ID);
+        UserDto actual = userController.updateUser(USER_DTO, ID).getBody();
 
         assertEquals(USER_DTO, actual);
     }
@@ -63,11 +66,12 @@ class UserControllerTest {
 
     @Test
     void getAllUsers_ShouldReturnListOfUsers() {
-        List<UserDto> expected = Collections.singletonList(USER_DTO);
+        Page<UserDto> expected = new PageImpl<>(Collections.singletonList(USER_DTO));
+        Pageable pageable = PageRequest.of(1, 1);
 
-        when(userService.findAll()).thenReturn(expected);
+        when(userService.findAll(pageable)).thenReturn(expected);
 
-        List<UserDto> actual = userController.getAllUsers();
+        Page<UserDto> actual = userController.getAllUsers(pageable).getBody();
 
         assertEquals(expected, actual);
     }

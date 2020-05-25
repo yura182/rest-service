@@ -10,10 +10,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -43,56 +46,61 @@ class OrderServiceImplTest {
         when(orderMapper.mapDtoToEntity(ORDER_DTO)).thenReturn(ORDER_ENTITY);
         when(orderMapper.mapEntityToDto(ORDER_ENTITY)).thenReturn(ORDER_DTO);
 
-        orderService.add(ORDER_DTO);
+        orderService.add(ID, ORDER_DTO);
 
         verify(orderRepository).save(ORDER_ENTITY);
     }
 
     @Test
     void findById_ShouldFindOrder() {
-        when(orderRepository.findById(ID)).thenReturn(Optional.of(ORDER_ENTITY));
+        when(orderRepository.findByUserEntityAndId(getUserEntityWithId(ID), ID)).thenReturn(Optional.of(ORDER_ENTITY));
         when(orderMapper.mapEntityToDto(ORDER_ENTITY)).thenReturn(ORDER_DTO);
 
-        OrderDto actual = orderService.findById(ID);
+        OrderDto actual = orderService.findByUserIdAndOrderId(ID, ID);
 
         assertEquals(ORDER_DTO, actual);
     }
 
     @Test
     void findById_ShouldThrowEntityNotFoundException() {
-        when(orderRepository.findById(ID)).thenReturn(Optional.empty());
+        when(orderRepository.findByUserEntityAndId(getUserEntityWithId(ID), ID)).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> orderService.findById(ID));
+        assertThrows(EntityNotFoundException.class, () -> orderService.findByUserIdAndOrderId(ID, ID));
     }
 
     @Test
     void update_ShouldUpdateOrder() {
-        when(orderRepository.findById(ID)).thenReturn(Optional.of(ORDER_ENTITY));
+        when(orderRepository.findByUserEntityAndId(getUserEntityWithId(ID), ID)).thenReturn(Optional.of(ORDER_ENTITY));
         when(orderMapper.mapDtoToEntity(ORDER_DTO)).thenReturn(ORDER_ENTITY);
 
-        orderService.update(ORDER_DTO, ID);
+        orderService.update(ORDER_DTO, ID, ID);
 
         verify(orderRepository).save(ORDER_ENTITY);
     }
 
     @Test
     void delete_ShouldDeleteOrder() {
-        orderService.delete(ID);
+        orderService.delete(ID, ID);
 
-        verify(orderRepository).deleteById(ID);
+        verify(orderRepository).deleteByUserEntityAndId(getUserEntityWithId(ID), ID);
     }
 
     @Test
     void findAll_ShouldReturnListOfOrders() {
-        List<OrderEntity> orders = Collections.singletonList(ORDER_ENTITY);
-        List<OrderDto> expected = Collections.singletonList(ORDER_DTO);
+        Page<OrderEntity> orders = new PageImpl<>(Collections.singletonList(ORDER_ENTITY));
+        Page<OrderDto> expected = new PageImpl<>(Collections.singletonList(ORDER_DTO));
+        Pageable pageable = PageRequest.of(1, 1);
 
-        when(orderRepository.findAll()).thenReturn(orders);
+        when(orderRepository.findAllByUserEntity(getUserEntityWithId(ID), pageable)).thenReturn(orders);
         when(orderMapper.mapEntityToDto(ORDER_ENTITY)).thenReturn(ORDER_DTO);
 
-        List<OrderDto> actual = orderService.findAll();
+        Page<OrderDto> actual = orderService.findAllByUserId(ID, pageable);
 
         assertEquals(expected, actual);
+    }
+
+    private  UserEntity getUserEntityWithId(Integer id) {
+        return UserEntity.builder().withId(id).build();
     }
 
     private static OrderEntity getOrderEntity() {

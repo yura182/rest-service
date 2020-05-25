@@ -1,18 +1,18 @@
 package com.yura.resthw.service;
 
 import com.yura.resthw.dto.OrderDto;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface OrderService {
 
-    OrderDto add(OrderDto orderDto);
+    OrderDto add(Integer userId, OrderDto orderDto);
 
-    OrderDto findById(Integer id);
+    OrderDto findByUserIdAndOrderId(Integer userId, Integer orderId);
 
-    List<OrderDto> findAll();
+    Page<OrderDto> findAllByUserId(Integer userId, Pageable pageable);
 
-    OrderDto update(OrderDto orderDto, Integer id);
+    OrderDto update(OrderDto orderDto, Integer userId, Integer orderId);
 
-    void delete(Integer id);
+    void delete(Integer userId, Integer orderId);
 }

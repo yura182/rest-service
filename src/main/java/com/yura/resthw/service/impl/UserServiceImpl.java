@@ -6,11 +6,13 @@ import com.yura.resthw.entity.UserEntity;
 import com.yura.resthw.service.UserService;
 import com.yura.resthw.service.mapper.EntityMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -42,7 +44,7 @@ public class UserServiceImpl implements UserService {
 
         userDto.setId(id);
 
-       return userMapper.mapEntityToDto(saveEntity(userDto));
+        return userMapper.mapEntityToDto(saveEntity(userDto));
     }
 
     @Override
@@ -53,12 +55,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDto> findAll() {
+    public Page<UserDto> findAll(Pageable pageable) {
         return userRepository
-                .findAll()
-                .stream()
-                .map(userMapper::mapEntityToDto)
-                .collect(Collectors.toList());
+                .findAll(pageable)
+                .map(userMapper::mapEntityToDto);
     }
 
     private UserEntity saveEntity(UserDto userDto) {
@@ -68,6 +68,14 @@ public class UserServiceImpl implements UserService {
     private UserEntity getUserById(Integer id) {
         return userRepository
                 .findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userRepository
+                .findByEmail(username)
+                .map(userMapper::mapEntityToDto)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
     }
 }

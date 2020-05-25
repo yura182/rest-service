@@ -1,16 +1,17 @@
 package com.yura.resthw.service;
 
 import com.yura.resthw.dto.UserDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
-import java.util.List;
-
-public interface UserService {
+public interface UserService extends UserDetailsService {
 
     UserDto add(UserDto userDto);
 
     UserDto findById(Integer id);
 
-    List<UserDto> findAll();
+    Page<UserDto> findAll(Pageable pageable);
 
     UserDto update(UserDto userDto, Integer id);
 
